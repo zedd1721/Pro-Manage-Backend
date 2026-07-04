@@ -16,7 +16,9 @@ app.use(cookieParser());
 
 //auth
 app.use("/api/auth", authRoutes);
-app.use("/api/project", workspaceRoutes);
+
+//invite
+app.use("/api/invite", workspaceRoutes);
 
 app.get('/health', (req, res) => {
     res.send("Promanage backend is UP!!")

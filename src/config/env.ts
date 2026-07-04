@@ -9,5 +9,6 @@ export const env = {
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
     BREVO_API_KEY: process.env.BREVO_API_KEY as string,
     BREVO_SENDER_EMAIL: process.env.BREVO_SENDER_EMAIL as string,
-    BREVO_SENDER_NAME: process.env.BREVO_SENDER_NAME || "Pro Manage"
+    BREVO_SENDER_NAME: process.env.BREVO_SENDER_NAME || "Pro Manage",
+    FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:3000"
 }

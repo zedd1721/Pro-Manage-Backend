@@ -65,19 +65,53 @@ export const sendEmail = async ({
 };
 
 type SendProjectInviteEmailArgs = {
+  joinLink: string;
   projectName: string;
   recipientEmail: string;
   joinCode: string;
   recipientName?: string;
+  signupLink?: string;
 };
 
 export const sendProjectInviteEmail = async ({
+  joinLink,
   projectName,
   recipientEmail,
   joinCode,
   recipientName,
+  signupLink,
 }: SendProjectInviteEmailArgs) => {
   const greeting = recipientName ? `Hi ${recipientName},` : "Hi,";
+  const requiresSignup = Boolean(signupLink);
+  const introText = requiresSignup
+    ? `You have been invited to join the project "${projectName}". Please sign up first, then use the joining code below.`
+    : `You have been invited to join the project "${projectName}".`;
+  const actionText = requiresSignup
+    ? `Sign up here: ${signupLink}
+
+After signing up, click join workspace and enter the code below.
+
+Join workspace here: ${joinLink}`
+    : `Join here: ${joinLink}`;
+  const actionHtml = requiresSignup
+    ? `
+        <p style="margin-top: 16px;">
+          <a href="${signupLink}" style="display: inline-block; padding: 10px 16px; border-radius: 8px; background: #111827; color: #ffffff; text-decoration: none; margin-right: 8px;">
+            Sign Up
+          </a>
+          <a href="${joinLink}" style="display: inline-block; padding: 10px 16px; border-radius: 8px; background: #374151; color: #ffffff; text-decoration: none;">
+            Join Workspace
+          </a>
+        </p>
+        <p>After signing up, click join workspace and enter the code below.</p>
+      `
+    : `
+        <p style="margin-top: 16px;">
+          <a href="${joinLink}" style="display: inline-block; padding: 10px 16px; border-radius: 8px; background: #111827; color: #ffffff; text-decoration: none;">
+            Join Project
+          </a>
+        </p>
+      `;
 
   return sendEmail({
     to: [
@@ -89,18 +123,21 @@ export const sendProjectInviteEmail = async ({
     subject: `Invitation to join ${projectName}`,
     textContent: `${greeting}
 
-You have been invited to join the project "${projectName}".
+${introText}
 
 Your joining code is: ${joinCode}
+
+${actionText}
 `,
     htmlContent: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
         <p>${greeting}</p>
-        <p>You have been invited to join the project <strong>${projectName}</strong>.</p>
+        <p>${introText.replace(projectName, `<strong>${projectName}</strong>`)}</p>
         <p>Your joining code is:</p>
         <div style="display: inline-block; padding: 12px 18px; border-radius: 8px; background: #f3f4f6; font-size: 20px; font-weight: 700; letter-spacing: 2px;">
           ${joinCode}
         </div>
+        ${actionHtml}
       </div>
     `,
   });

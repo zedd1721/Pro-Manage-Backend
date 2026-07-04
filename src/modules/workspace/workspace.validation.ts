@@ -18,6 +18,23 @@ export const createProjectSchema = z.object({
 export type CreateProjectBody = z.infer<typeof createProjectSchema>;
 
 export const joinProjectSchema = z.object({
-  joinCode: z.string().max(6)
-})
+  joinCode: z
+    .string()
+    .trim()
+    .min(6, "Joining code is required")
+    .max(6, "Joining code must be 6 characters"),
+});
 export type JoinProjectBody = z.infer<typeof joinProjectSchema>;
+
+export const inviteMemberSchema = z.object({
+  projectId: z.string().trim().min(1, "Project id is required"),
+  email: z.email("Valid email is required").trim().toLowerCase(),
+  designation: z
+    .string()
+    .trim()
+    .min(2, "Designation is required")
+    .max(100, "Designation should be less then 100 characters"),
+  role: z.literal("member").default("member"),
+});
+
+export type InviteMemberBody = z.infer<typeof inviteMemberSchema>;

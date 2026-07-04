@@ -1,1 +1,5 @@
-export type {CreateProjectBody} from "./workspace.validation"
+export type {
+  CreateProjectBody,
+  InviteMemberBody,
+  JoinProjectBody,
+} from "./workspace.validation";

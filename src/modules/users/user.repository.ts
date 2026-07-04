@@ -7,6 +7,11 @@ export const findUserByEmail = async(email: string) => {
     return result[0];
 }
 
+export const findUserById = async(id: string) => {
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result[0];
+}
+
 export const createUser = async(data: typeof users.$inferInsert) => {
     const result = await db.insert(users).values(data).returning();
     return result[0];
