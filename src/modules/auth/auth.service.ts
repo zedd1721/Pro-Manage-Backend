@@ -78,6 +78,8 @@ export const loginUser = async(body: LoginBody) => {
     expiresIn: "7d",
   });
 
+  await updateRefreshToken(userId, refreshToken)
+
   return {
     accessToken,
     refreshToken
@@ -96,7 +98,7 @@ export const logoutUser = async(refreshToken: string) => {
 }
 
 export const rotateRefreshToken = async(oldRefreshToken: string) => {
-  const payload = jwt.verify(
+  jwt.verify(
     oldRefreshToken,
     env.JWT_REFRESH_SECRET
   ) as JwtPayload;
