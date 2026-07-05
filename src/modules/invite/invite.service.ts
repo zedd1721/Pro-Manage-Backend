@@ -6,7 +6,7 @@ import {
   CreateProjectBody,
   InviteMemberBody,
   JoinProjectBody,
-} from "./workspace.validation";
+} from "./invite.validation";
 import {
   createMember,
   createPendingMember,
@@ -16,8 +16,7 @@ import {
   findProjectByJoinCode,
   findProjectById,
   insertProject,
-} from "./workspace.repository";
-
+} from "./invite.repository";
 
 const generateProjectCode = (length: number = 6): string => {
   let code = "";
@@ -53,7 +52,6 @@ const isUniqueConstraintError = (
 };
 
 export const createProject = async (body: CreateProjectBody, managerId: string) => {
-
   const projectId = uuid();
 
   const projectData = {
@@ -63,33 +61,31 @@ export const createProject = async (body: CreateProjectBody, managerId: string) 
     managerId,
   };
 
-  while(true){
+  while (true) {
     const code = generateProjectCode();
 
-    try{
-        const project = await insertProject({
-          ...projectData,
-          joinCode: code,
-        });
+    try {
+      const project = await insertProject({
+        ...projectData,
+        joinCode: code,
+      });
 
-        await createMember({
-          id: uuid(),
-          projectId: project.id,
-          userId: managerId,
-          role: "manager",
-          designation: "Project Manager",
-        });
+      await createMember({
+        id: uuid(),
+        projectId: project.id,
+        userId: managerId,
+        role: "manager",
+        designation: "Project Manager",
+      });
 
-        return project;
-    }catch(error) {
-        if(isUniqueConstraintError(error, "join_code")){
-            continue;
-        }
-        throw error;
+      return project;
+    } catch (error) {
+      if (isUniqueConstraintError(error, "join_code")) {
+        continue;
+      }
+      throw error;
     }
   }
-
-
 };
 
 export const inviteMember = async (

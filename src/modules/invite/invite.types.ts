@@ -2,4 +2,4 @@ export type {
   CreateProjectBody,
   InviteMemberBody,
   JoinProjectBody,
-} from "./workspace.validation";
+} from "./invite.validation";

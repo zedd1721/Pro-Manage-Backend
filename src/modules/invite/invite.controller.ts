@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import * as workspaceService from "./workspace.service"
+import * as inviteService from "./invite.service"
 import { sendResponse } from "../../utils/apiResponse";
 
 export const createProject = async(req: Request, res: Response) => {
-    const result = await workspaceService.createProject(req.body, req.user.userId)
+    const result = await inviteService.createProject(req.body, req.user.userId)
 
     sendResponse(
         res,
@@ -14,7 +14,7 @@ export const createProject = async(req: Request, res: Response) => {
 }
 
 export const inviteMember = async (req: Request, res: Response) => {
-    const result = await workspaceService.inviteMember(req.body, req.user.userId);
+    const result = await inviteService.inviteMember(req.body, req.user.userId);
 
     sendResponse(
         res,
@@ -25,7 +25,7 @@ export const inviteMember = async (req: Request, res: Response) => {
 }
 
 export const joinProject = async (req: Request, res: Response) => {
-    const result = await workspaceService.joinProject(req.body, req.user.userId);
+    const result = await inviteService.joinProject(req.body, req.user.userId);
 
     sendResponse(
         res,

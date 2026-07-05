@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { and, eq } from "drizzle-orm";
-import { members, pendingMembers, projects } from "./workspace.schema";
+import { members, pendingMembers, projects } from "./invite.schema";
 
 export const insertProject = async (data: typeof projects.$inferInsert) => {
   const result = await db.insert(projects).values(data).returning();

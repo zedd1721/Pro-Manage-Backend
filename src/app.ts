@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./modules/auth/auth.routes"
-import workspaceRoutes from "./modules/workspace/workspace.routes";
+import inviteRoutes from "./modules/invite/invite.routes";
 import { errorHandler } from "./middlewares/errorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
 
@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 
 //invite
-app.use("/api/invite", workspaceRoutes);
+app.use("/api/invite", inviteRoutes);
 
 app.get('/health', (req, res) => {
     res.send("Promanage backend is UP!!")
