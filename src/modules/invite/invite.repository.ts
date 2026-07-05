@@ -7,6 +7,32 @@ export const insertProject = async (data: typeof projects.$inferInsert) => {
   return result[0];
 };
 
+type CreateProjectWithManagerMemberArgs = {
+  project: typeof projects.$inferInsert;
+  member: typeof members.$inferInsert;
+};
+
+export const createProjectWithManagerMember = async ({
+  project,
+  member,
+}: CreateProjectWithManagerMemberArgs) => {
+  return db.transaction(async (tx) => {
+    const insertedProjects = await tx
+      .insert(projects)
+      .values(project)
+      .returning();
+
+    const createdProject = insertedProjects[0];
+
+    await tx.insert(members).values({
+      ...member,
+      projectId: createdProject.id,
+    });
+
+    return createdProject;
+  });
+};
+
 export const findProjectById = async (projectId: string) => {
   const result = await db.select().from(projects).where(eq(projects.id, projectId));
   return result[0];

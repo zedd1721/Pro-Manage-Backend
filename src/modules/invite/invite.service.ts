@@ -10,12 +10,12 @@ import {
 import {
   createMember,
   createPendingMember,
+  createProjectWithManagerMember,
   deletePendingMemberById,
   findMemberByProjectAndUser,
   findPendingMemberByProjectAndEmail,
   findProjectByJoinCode,
   findProjectById,
-  insertProject,
 } from "./invite.repository";
 
 const generateProjectCode = (length: number = 6): string => {
@@ -65,17 +65,18 @@ export const createProject = async (body: CreateProjectBody, managerId: string) 
     const code = generateProjectCode();
 
     try {
-      const project = await insertProject({
-        ...projectData,
-        joinCode: code,
-      });
-
-      await createMember({
-        id: uuid(),
-        projectId: project.id,
-        userId: managerId,
-        role: "manager",
-        designation: "Project Manager",
+      const project = await createProjectWithManagerMember({
+        project: {
+          ...projectData,
+          joinCode: code,
+        },
+        member: {
+          id: uuid(),
+          projectId,
+          userId: managerId,
+          role: "manager",
+          designation: "Project Manager",
+        },
       });
 
       return project;
