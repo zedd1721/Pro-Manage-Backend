@@ -97,17 +97,45 @@ export const logoutUser = async(refreshToken: string) => {
   await updateRefreshToken(user.id, null);
 }
 
-export const rotateRefreshToken = async(oldRefreshToken: string) => {
-  jwt.verify(
-    oldRefreshToken,
-    env.JWT_REFRESH_SECRET
-  ) as JwtPayload;
+export const rotateRefreshToken = async(oldRefreshToken?: string) => {
+  if (!oldRefreshToken) {
+    const err = new Error("Refresh token missing") as Error & {
+      statusCode?: number;
+      code?: string;
+    };
+    err.statusCode = 401;
+    err.code = "REFRESH_TOKEN_MISSING";
+    throw err;
+  }
+
+  try {
+    jwt.verify(
+      oldRefreshToken,
+      env.JWT_REFRESH_SECRET
+    ) as JwtPayload;
+  } catch (error) {
+    const err = new Error(
+      error instanceof jwt.TokenExpiredError
+        ? "Refresh token expired"
+        : "Invalid refresh token"
+    ) as Error & { statusCode?: number; code?: string };
+    err.statusCode = 401;
+    err.code =
+      error instanceof jwt.TokenExpiredError
+        ? "REFRESH_TOKEN_EXPIRED"
+        : "INVALID_REFRESH_TOKEN";
+    throw err;
+  }
 
   const user = await findUserByRefreshToken(oldRefreshToken);
 
   if(!user){
-    const err = new Error("Invalid refresh token") as Error & {statusCode?: number};
+    const err = new Error("Invalid refresh token") as Error & {
+      statusCode?: number;
+      code?: string;
+    };
     err.statusCode=401;
+    err.code = "INVALID_REFRESH_TOKEN";
     throw err;
   }
 

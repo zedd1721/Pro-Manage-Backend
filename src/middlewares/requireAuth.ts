@@ -12,7 +12,8 @@ export const requireAuth = (
   if (!accessToken) {
     res.status(401).json({
       success: false,
-      message: "Unauthorized",
+      code: "ACCESS_TOKEN_MISSING",
+      message: "Access token missing",
     });
     return;
   }
@@ -26,6 +27,7 @@ export const requireAuth = (
     if (!payload.userId) {
       res.status(401).json({
         success: false,
+        code: "INVALID_TOKEN_PAYLOAD",
         message: "Invalid token payload",
       });
       return;
@@ -36,10 +38,20 @@ export const requireAuth = (
     };
 
     next();
-  } catch {
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({
+        success: false,
+        code: "ACCESS_TOKEN_EXPIRED",
+        message: "Access token expired",
+      });
+      return;
+    }
+
     res.status(401).json({
       success: false,
-      message: "Invalid or expired token",
+      code: "INVALID_ACCESS_TOKEN",
+      message: "Invalid access token",
     });
   }
 };
