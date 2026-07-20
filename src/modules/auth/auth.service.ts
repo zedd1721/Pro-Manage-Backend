@@ -39,9 +39,7 @@ export const registerUser = async (body: RegisterBody) => {
       id: user.id,
       name: user.name,
       email: user.email,
-    },
-    accessToken,
-    refreshToken,
+    }
   };
 };
 
