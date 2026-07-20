@@ -76,3 +76,30 @@ export const rotateToken = async(
         null
     )
 }
+
+export const getCurrentUser = async(
+    req: Request,
+    res: Response
+): Promise<void> => {
+    const userId = req.user?.userId;
+
+    if(!userId) {
+        sendResponse(
+            res,
+            401,
+            "Authentication required",
+            null
+        );
+        return;
+    }
+
+    const result = await authService.getCurrentUser(userId);
+
+    sendResponse(
+        res,
+        200,
+        "Current user fetched",
+        result,
+    )
+
+}

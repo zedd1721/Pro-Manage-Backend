@@ -3,6 +3,7 @@ import * as authController from "./auth.controller";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { validate } from "../../middlewares/validate";
 import { registerSchema, loginSchema } from "./auth.validation";
+import { requireAuth } from "../../middlewares/requireAuth";
 
 const router = Router();
 
@@ -18,5 +19,7 @@ router.post(
 );
 router.post("/logout", asyncHandler(authController.logout));
 router.post("/refresh-token", asyncHandler(authController.rotateToken));
+
+router.get("/me", requireAuth, asyncHandler(authController.getCurrentUser));
 
 export default router;
