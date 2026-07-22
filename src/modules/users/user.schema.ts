@@ -1,17 +1,19 @@
 import { pgTable, varchar, timestamp } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
-    id: varchar("id", { length:36 }).primaryKey(),
+  id: varchar("id", { length: 36 }).primaryKey(),
 
-    name: varchar("name", {length: 100 }).notNull(),
+  name: varchar("name", { length: 100 }).notNull(),
 
-    email: varchar("email", {length: 255}).notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
 
-    password: varchar("password", {length:255}).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
 
-    refreshToken: varchar("refresh_token", {length: 500}),
+  refreshToken: varchar("refresh_token", { length: 500 }),
 
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastUsedProjectId: varchar("last_used_project_id", { length: 36 }),
 
-    updatedAt: timestamp("updated_at").defaultNow().notNull()
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -1,6 +1,7 @@
 import { db } from "../../db";
 import { and, eq } from "drizzle-orm";
 import { members, pendingMembers, projects } from "./invite.schema";
+import { users } from "../users/user.schema";
 
 export const insertProject = async (data: typeof projects.$inferInsert) => {
   const result = await db.insert(projects).values(data).returning();
@@ -28,6 +29,11 @@ export const createProjectWithManagerMember = async ({
       ...member,
       projectId: createdProject.id,
     });
+
+    await tx.update(users).set({
+      lastUsedProjectId: createdProject.id,
+      updatedAt: new Date(),
+    }).where(eq(users.id, member.userId));
 
     return createdProject;
   });
