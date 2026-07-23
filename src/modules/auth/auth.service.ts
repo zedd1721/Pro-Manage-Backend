@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { v7 as uuidv7 } from "uuid";
 import { env } from "../../config/env";
-import { createUser, findUserByEmail, findUserById, findUserByRefreshToken, updateRefreshToken } from "../users/user.repository";
+import { createUser, findAndSetProjectByUserId, findUserByEmail, findUserById, findUserByRefreshToken, updateRefreshToken } from "../users/user.repository";
 import { LoginBody, RegisterBody } from "./auth.validation";
 
 export const registerUser = async (body: RegisterBody) => {
@@ -169,8 +169,15 @@ export const getCurrentUser = async (userId: string) => {
     throw error;
   }
 
+  let activeProject = user.lastUsedProjectId;
+  
+  if(activeProject == null){
+    activeProject = await findAndSetProjectByUserId(user.id);
+  }
+
   return {
     name: user.name,
-    email: user.email
+    email: user.email,
+    activeProject: activeProject,
   }
 }

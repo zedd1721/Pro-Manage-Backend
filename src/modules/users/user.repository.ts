@@ -1,6 +1,7 @@
 import { db } from "../../db";
 import { eq } from "drizzle-orm";
 import { users } from "./user.schema";
+import { members } from "../invite/invite.schema";
 
 export const findUserByEmail = async(email: string) => {
     const result = await db.select().from(users).where(eq(users.email, email));
@@ -27,4 +28,21 @@ export const updateRefreshToken = async(
     refreshToken: string | null
 ) => {
     await db.update(users).set({refreshToken}).where(eq(users.id, userId));
+}
+
+export const findAndSetProjectByUserId = async(userId: string) => {
+    const result = await db.select().from(members).where(eq(members.userId, userId));
+
+    const project = result[0];
+
+    if(!project){
+        return null;
+    }
+
+   await db.update(users).set({
+    lastUsedProjectId: project.projectId,
+    updatedAt: new Date()
+   }).where(eq(users.id, userId));
+    
+    return project.projectId;
 }
