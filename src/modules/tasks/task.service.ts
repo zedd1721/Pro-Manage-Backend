@@ -36,11 +36,17 @@ const assertProjectViewer = async (projectId: string, userId: string) => {
     throw createError("Project not found", 404);
   }
 
-  const member = await taskRepository.findMemberByProjectAndUser(projectId, userId);
+  const member = await taskRepository.findMemberByProjectAndUser(
+    projectId,
+    userId,
+  );
 
   // Project tasks can be viewed by the manager and anyone recorded as a project member.
   if (project.managerId !== userId && !member) {
-    throw createError("You are not allowed to view tasks for this project", 403);
+    throw createError(
+      "You are not allowed to view tasks for this project",
+      403,
+    );
   }
 
   return { project, member };
@@ -69,14 +75,19 @@ const assertAssignedUserIsProjectMember = async (
     return;
   }
 
-  const member = await taskRepository.findMemberByProjectAndUser(projectId, assignedTo);
+  const member = await taskRepository.findMemberByProjectAndUser(
+    projectId,
+    assignedTo,
+  );
 
   if (!member) {
     throw createError("Assigned user must be a member of this project", 400);
   }
 };
 
-const mapTaskResponse = async (task: Awaited<ReturnType<typeof taskRepository.findTaskById>>) => {
+const mapTaskResponse = async (
+  task: Awaited<ReturnType<typeof taskRepository.findTaskById>>,
+) => {
   if (!task) {
     throw createError("Task not found", 404);
   }
@@ -84,7 +95,9 @@ const mapTaskResponse = async (task: Awaited<ReturnType<typeof taskRepository.fi
   const checklistItems = await taskRepository.findChecklistByTaskId(task.id);
   const people = await taskRepository.getTaskPeople([task]);
   const peopleById = new Map(people.map((person) => [person.id, person]));
-  const assignedUser = task.assignedTo ? peopleById.get(task.assignedTo) : undefined;
+  const assignedUser = task.assignedTo
+    ? peopleById.get(task.assignedTo)
+    : undefined;
   const createdByUser = peopleById.get(task.createdBy);
   const doneCount = checklistItems.filter((item) => item.isCompleted).length;
 
@@ -204,7 +217,10 @@ export const updateTask = async (
   }
 
   await assertProjectManager(existingTask.projectId, userId);
-  await assertAssignedUserIsProjectMember(existingTask.projectId, body.assigned_to);
+  await assertAssignedUserIsProjectMember(
+    existingTask.projectId,
+    body.assigned_to,
+  );
 
   const updates: Parameters<typeof taskRepository.updateTaskById>[1] = {};
 
@@ -256,7 +272,10 @@ export const updateChecklistItem = async (
   // Checklist updates are intentionally narrower: assignee can update progress,
   // while the manager can still step in to correct or complete an item.
   if (project.managerId !== userId && task.assignedTo !== userId) {
-    throw createError("Only assigned member or project manager can update checklist", 403);
+    throw createError(
+      "Only assigned member or project manager can update checklist",
+      403,
+    );
   }
 
   const checklistItem = await taskRepository.findChecklistItemById(checklistId);
@@ -322,7 +341,9 @@ export const renameChecklistItem = async (
     throw createError("Checklist item not found", 404);
   }
 
-  await taskRepository.updateChecklistItemById(checklistId, { title: body.title });
+  await taskRepository.updateChecklistItemById(checklistId, {
+    title: body.title,
+  });
 
   return mapTaskResponse(await taskRepository.findTaskById(taskId));
 };

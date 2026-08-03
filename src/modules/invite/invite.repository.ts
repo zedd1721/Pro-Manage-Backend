@@ -30,17 +30,23 @@ export const createProjectWithManagerMember = async ({
       projectId: createdProject.id,
     });
 
-    await tx.update(users).set({
-      lastUsedProjectId: createdProject.id,
-      updatedAt: new Date(),
-    }).where(eq(users.id, member.userId));
+    await tx
+      .update(users)
+      .set({
+        lastUsedProjectId: createdProject.id,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, member.userId));
 
     return createdProject;
   });
 };
 
 export const findProjectById = async (projectId: string) => {
-  const result = await db.select().from(projects).where(eq(projects.id, projectId));
+  const result = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.id, projectId));
   return result[0];
 };
 
@@ -62,7 +68,10 @@ export const createMember = async (data: typeof members.$inferInsert) => {
 };
 
 export const findProjectByJoinCode = async (joinCode: string) => {
-  const result = await db.select().from(projects).where(eq(projects.joinCode, joinCode));
+  const result = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.joinCode, joinCode));
   return result[0];
 };
 

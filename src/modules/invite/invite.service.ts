@@ -51,7 +51,10 @@ const isUniqueConstraintError = (
   return false;
 };
 
-export const createProject = async (body: CreateProjectBody, managerId: string) => {
+export const createProject = async (
+  body: CreateProjectBody,
+  managerId: string,
+) => {
   const projectId = uuid();
 
   const projectData = {
@@ -96,13 +99,17 @@ export const inviteMember = async (
   const project = await findProjectById(body.projectId);
 
   if (!project) {
-    const error = new Error("Project not found") as Error & { statusCode?: number };
+    const error = new Error("Project not found") as Error & {
+      statusCode?: number;
+    };
     error.statusCode = 404;
     throw error;
   }
 
   if (project.managerId !== managerId) {
-    const error = new Error("Only project manager can send invites") as Error & {
+    const error = new Error(
+      "Only project manager can send invites",
+    ) as Error & {
       statusCode?: number;
     };
     error.statusCode = 403;
@@ -121,7 +128,9 @@ export const inviteMember = async (
     );
 
     if (existingPendingMember) {
-      const error = new Error("Invitation already sent to this email") as Error & {
+      const error = new Error(
+        "Invitation already sent to this email",
+      ) as Error & {
         statusCode?: number;
       };
       error.statusCode = 409;
@@ -155,14 +164,19 @@ export const inviteMember = async (
   }
 
   if (invitedUser.id === managerId) {
-    const error = new Error("Project manager cannot invite themselves") as Error & {
+    const error = new Error(
+      "Project manager cannot invite themselves",
+    ) as Error & {
       statusCode?: number;
     };
     error.statusCode = 409;
     throw error;
   }
 
-  const existingMember = await findMemberByProjectAndUser(project.id, invitedUser.id);
+  const existingMember = await findMemberByProjectAndUser(
+    project.id,
+    invitedUser.id,
+  );
 
   if (existingMember) {
     const error = new Error("User already exists in this project") as Error & {
@@ -199,14 +213,13 @@ export const inviteMember = async (
   };
 };
 
-export const joinProject = async (
-  body: JoinProjectBody,
-  userId: string,
-) => {
+export const joinProject = async (body: JoinProjectBody, userId: string) => {
   const project = await findProjectByJoinCode(body.joinCode);
 
   if (!project) {
-    const error = new Error("Invalid joining code") as Error & { statusCode?: number };
+    const error = new Error("Invalid joining code") as Error & {
+      statusCode?: number;
+    };
     error.statusCode = 404;
     throw error;
   }
@@ -214,7 +227,9 @@ export const joinProject = async (
   const user = await findUserById(userId);
 
   if (!user) {
-    const error = new Error("User not found") as Error & { statusCode?: number };
+    const error = new Error("User not found") as Error & {
+      statusCode?: number;
+    };
     error.statusCode = 404;
     throw error;
   }
@@ -256,4 +271,3 @@ export const joinProject = async (
     message: "User joined successfully",
   };
 };
-

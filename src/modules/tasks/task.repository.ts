@@ -5,7 +5,10 @@ import { users } from "../users/user.schema";
 import { checklist, tasks } from "./task.schema";
 
 export const findProjectById = async (projectId: string) => {
-  const result = await db.select().from(projects).where(eq(projects.id, projectId));
+  const result = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.id, projectId));
   return result[0];
 };
 
@@ -119,7 +122,9 @@ export const deleteChecklistItemById = async (checklistId: string) => {
   await db.delete(checklist).where(eq(checklist.id, checklistId));
 };
 
-export const getTaskPeople = async (taskList: Array<typeof tasks.$inferSelect>) => {
+export const getTaskPeople = async (
+  taskList: Array<typeof tasks.$inferSelect>,
+) => {
   const ids = new Set<string>();
 
   for (const task of taskList) {

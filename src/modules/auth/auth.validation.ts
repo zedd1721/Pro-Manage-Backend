@@ -22,4 +22,3 @@ export const loginSchema = z.object({
 });
 
 export type LoginBody = z.infer<typeof loginSchema>;
-

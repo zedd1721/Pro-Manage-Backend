@@ -2,14 +2,23 @@ import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { v7 as uuidv7 } from "uuid";
 import { env } from "../../config/env";
-import { createUser, findAndSetProjectByUserId, findUserByEmail, findUserById, findUserByRefreshToken, updateRefreshToken } from "../users/user.repository";
+import {
+  createUser,
+  findAndSetProjectByUserId,
+  findUserByEmail,
+  findUserById,
+  findUserByRefreshToken,
+  updateRefreshToken,
+} from "../users/user.repository";
 import { LoginBody, RegisterBody } from "./auth.validation";
 
 export const registerUser = async (body: RegisterBody) => {
   const existingUser = await findUserByEmail(body.email);
 
   if (existingUser) {
-    const error = new Error("User already exists") as Error & {statusCode?: number};
+    const error = new Error("User already exists") as Error & {
+      statusCode?: number;
+    };
     error.statusCode = 409;
     throw error;
   }
@@ -41,30 +50,33 @@ export const registerUser = async (body: RegisterBody) => {
       email: user.email,
     },
     accessToken,
-    refreshToken
+    refreshToken,
   };
 };
 
-
-export const loginUser = async(body: LoginBody) => {
+export const loginUser = async (body: LoginBody) => {
   const existingUser = await findUserByEmail(body.email);
 
-  if(!existingUser){
-    const error = new Error("Invalid Email or Passwords") as Error & {statusCode?:number};
+  if (!existingUser) {
+    const error = new Error("Invalid Email or Passwords") as Error & {
+      statusCode?: number;
+    };
 
-    error.statusCode=400;
+    error.statusCode = 400;
     throw error;
   }
 
   const isValidPassword = await bcrypt.compare(
     body.password,
-    existingUser.password
+    existingUser.password,
   );
 
-  if(!isValidPassword){
-    const error = new Error("Invalid Email or Passwords") as Error & {statusCode?:number};
+  if (!isValidPassword) {
+    const error = new Error("Invalid Email or Passwords") as Error & {
+      statusCode?: number;
+    };
 
-    error.statusCode=400;
+    error.statusCode = 400;
     throw error;
   }
 
@@ -78,26 +90,25 @@ export const loginUser = async(body: LoginBody) => {
     expiresIn: "7d",
   });
 
-  await updateRefreshToken(userId, refreshToken)
+  await updateRefreshToken(userId, refreshToken);
 
   return {
     accessToken,
-    refreshToken
-  }
+    refreshToken,
+  };
+};
 
-}
-
-export const logoutUser = async(refreshToken: string) => {
+export const logoutUser = async (refreshToken: string) => {
   const user = await findUserByRefreshToken(refreshToken);
 
-  if(!user){
+  if (!user) {
     return;
   }
 
   await updateRefreshToken(user.id, null);
-}
+};
 
-export const rotateRefreshToken = async(oldRefreshToken?: string) => {
+export const rotateRefreshToken = async (oldRefreshToken?: string) => {
   if (!oldRefreshToken) {
     const err = new Error("Refresh token missing") as Error & {
       statusCode?: number;
@@ -109,15 +120,12 @@ export const rotateRefreshToken = async(oldRefreshToken?: string) => {
   }
 
   try {
-    jwt.verify(
-      oldRefreshToken,
-      env.JWT_REFRESH_SECRET
-    ) as JwtPayload;
+    jwt.verify(oldRefreshToken, env.JWT_REFRESH_SECRET) as JwtPayload;
   } catch (error) {
     const err = new Error(
       error instanceof jwt.TokenExpiredError
         ? "Refresh token expired"
-        : "Invalid refresh token"
+        : "Invalid refresh token",
     ) as Error & { statusCode?: number; code?: string };
     err.statusCode = 401;
     err.code =
@@ -129,12 +137,12 @@ export const rotateRefreshToken = async(oldRefreshToken?: string) => {
 
   const user = await findUserByRefreshToken(oldRefreshToken);
 
-  if(!user){
+  if (!user) {
     const err = new Error("Invalid refresh token") as Error & {
       statusCode?: number;
       code?: string;
     };
-    err.statusCode=401;
+    err.statusCode = 401;
     err.code = "INVALID_REFRESH_TOKEN";
     throw err;
   }
@@ -149,18 +157,17 @@ export const rotateRefreshToken = async(oldRefreshToken?: string) => {
     expiresIn: "7d",
   });
 
-  await updateRefreshToken(userId, refreshToken)
+  await updateRefreshToken(userId, refreshToken);
 
-  return{
+  return {
     accessToken,
-    refreshToken
-  }
-
-}
+    refreshToken,
+  };
+};
 
 export const getCurrentUser = async (userId: string) => {
   const user = await findUserById(userId);
-  if(!user) {
+  if (!user) {
     const error = new Error("User not found") as Error & {
       statusCode?: number;
     };
@@ -170,8 +177,8 @@ export const getCurrentUser = async (userId: string) => {
   }
 
   let activeProject = user.lastUsedProjectId;
-  
-  if(activeProject == null){
+
+  if (activeProject == null) {
     activeProject = await findAndSetProjectByUserId(user.id);
   }
 
@@ -179,5 +186,5 @@ export const getCurrentUser = async (userId: string) => {
     name: user.name,
     email: user.email,
     activeProject: activeProject,
-  }
-}
+  };
+};

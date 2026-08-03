@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import { env } from "./config/env";
-import authRoutes from "./modules/auth/auth.routes"
+import authRoutes from "./modules/auth/auth.routes";
 import inviteRoutes from "./modules/invite/invite.routes";
 import taskRoutes from "./modules/tasks/task.routes";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -30,9 +30,9 @@ app.use("/api/invite", inviteRoutes);
 //tasks
 app.use("/api/tasks", taskRoutes);
 
-app.get('/health', (req, res) => {
-    res.send("Promanage backend is UP!!")
-})
+app.get("/health", (req, res) => {
+  res.send("Promanage backend is UP!!");
+});
 
 app.use(errorHandler);
 

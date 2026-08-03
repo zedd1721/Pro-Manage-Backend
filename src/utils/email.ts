@@ -49,7 +49,9 @@ export const sendEmail = async ({
 
   if (!response.ok) {
     const errorBody = await response.text();
-    const error = new Error(`Brevo email send failed: ${errorBody}`) as Error & {
+    const error = new Error(
+      `Brevo email send failed: ${errorBody}`,
+    ) as Error & {
       statusCode?: number;
     };
 

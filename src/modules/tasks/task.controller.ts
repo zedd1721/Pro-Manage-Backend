@@ -4,7 +4,9 @@ import * as taskService from "./task.service";
 
 const getParam = (value: string | string[] | undefined, name: string) => {
   if (typeof value !== "string" || value.trim().length === 0) {
-    const error = new Error(`${name} is required`) as Error & { statusCode?: number };
+    const error = new Error(`${name} is required`) as Error & {
+      statusCode?: number;
+    };
     error.statusCode = 400;
     throw error;
   }
@@ -23,10 +25,7 @@ export const getTasks = async (req: Request, res: Response) => {
     throw error;
   }
 
-  const result = await taskService.getTasks(
-    projectId,
-    req.user.userId,
-  );
+  const result = await taskService.getTasks(projectId, req.user.userId);
 
   sendResponse(res, 200, "Tasks fetched successfully", result);
 };

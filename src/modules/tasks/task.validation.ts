@@ -6,7 +6,10 @@ export const taskStatuses = ["backlog", "todo", "inprogress", "done"] as const;
 const optionalDateString = z
   .string()
   .trim()
-  .refine((value) => !Number.isNaN(Date.parse(value)), "Valid due date is required");
+  .refine(
+    (value) => !Number.isNaN(Date.parse(value)),
+    "Valid due date is required",
+  );
 
 export const getTasksQuerySchema = z.object({
   projectId: z.string().trim().min(1, "Project id is required"),
