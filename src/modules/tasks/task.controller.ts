@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { sendResponse } from "../../utils/apiResponse";
 import * as taskService from "./task.service";
+import { GetTasksQuery } from "./task.validation";
 
 const getParam = (value: string | string[] | undefined, name: string) => {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -15,15 +16,7 @@ const getParam = (value: string | string[] | undefined, name: string) => {
 };
 
 export const getTasks = async (req: Request, res: Response) => {
-  const projectId = req.query.projectId;
-
-  if (typeof projectId !== "string" || projectId.trim().length === 0) {
-    const error = new Error("Project id is required") as Error & {
-      statusCode?: number;
-    };
-    error.statusCode = 400;
-    throw error;
-  }
+  const { projectId } = req.query as GetTasksQuery;
 
   const result = await taskService.getTasks(projectId, req.user.userId);
 

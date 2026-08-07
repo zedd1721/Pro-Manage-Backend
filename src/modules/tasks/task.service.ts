@@ -93,8 +93,8 @@ const mapTaskResponse = async (
   }
 
   const checklistItems = await taskRepository.findChecklistByTaskId(task.id);
-  const people = await taskRepository.getTaskPeople([task]);
-  const peopleById = new Map(people.map((person) => [person.id, person]));
+  const people = await taskRepository.getTaskPeople([task]); // converting to array and passing to the repo
+  const peopleById = new Map(people.map((person) => [person.id, person])); //JS hashmap
   const assignedUser = task.assignedTo
     ? peopleById.get(task.assignedTo)
     : undefined;
@@ -106,10 +106,8 @@ const mapTaskResponse = async (
     title: task.title,
     priority: task.priority,
     category: task.category,
-    tag: task.category,
     dueDate: task.dueDate,
     status: task.status,
-    column: task.status,
     assignedTo: assignedUser
       ? {
           id: assignedUser.id,
@@ -125,9 +123,7 @@ const mapTaskResponse = async (
     checklistItems: checklistItems.map((item) => ({
       id: item.id,
       title: item.title,
-      text: item.title,
       isCompleted: item.isCompleted,
-      done: item.isCompleted,
       position: item.position,
     })),
     createdBy: createdByUser

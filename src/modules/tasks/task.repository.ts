@@ -125,7 +125,7 @@ export const deleteChecklistItemById = async (checklistId: string) => {
 export const getTaskPeople = async (
   taskList: Array<typeof tasks.$inferSelect>,
 ) => {
-  const ids = new Set<string>();
+  const ids = new Set<string>(); // Set -> Doesnt store duplicates
 
   for (const task of taskList) {
     ids.add(task.createdBy);
@@ -134,5 +134,5 @@ export const getTaskPeople = async (
     }
   }
 
-  return findUsersByIds([...ids]);
+  return findUsersByIds([...ids]); //Converting set -> array
 };

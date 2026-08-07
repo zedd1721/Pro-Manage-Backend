@@ -6,6 +6,7 @@ import * as taskController from "./task.controller";
 import {
   addChecklistSchema,
   createTaskSchema,
+  getTasksQuerySchema,
   renameChecklistSchema,
   updateChecklistSchema,
   updateTaskSchema,
@@ -13,7 +14,14 @@ import {
 
 const router = Router();
 
-router.get("/", requireAuth, asyncHandler(taskController.getTasks));
+
+// getting project details (task details)
+router.get(
+  "/",
+  requireAuth,
+  validate(getTasksQuerySchema, "query"),
+  asyncHandler(taskController.getTasks),
+);
 
 router.post(
   "/",
