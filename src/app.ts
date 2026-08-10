@@ -6,6 +6,7 @@ import { env } from "./config/env";
 import authRoutes from "./modules/auth/auth.routes";
 import inviteRoutes from "./modules/invite/invite.routes";
 import taskRoutes from "./modules/tasks/task.routes";
+import analyticsRoutes from "./modules/analytics/analytics.routes";
 import { errorHandler } from "./middlewares/errorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
 
@@ -29,6 +30,9 @@ app.use("/api/invite", inviteRoutes);
 
 //tasks
 app.use("/api/tasks", taskRoutes);
+
+//analytics
+app.use("/api/analytics", analyticsRoutes);
 
 app.get("/health", (req, res) => {
   res.send("Promanage backend is UP!!");
