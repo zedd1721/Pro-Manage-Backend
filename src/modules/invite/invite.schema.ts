@@ -8,6 +8,8 @@ export const projects = pgTable("projects", {
 
   description: varchar("description", { length: 1000 }),
 
+  type: varchar("type", { length: 100 }),
+
   joinCode: varchar("join_code", { length: 6 }).notNull().unique(),
 
   managerId: varchar("manager_id", { length: 36 })
