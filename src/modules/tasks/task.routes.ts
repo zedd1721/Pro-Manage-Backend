@@ -22,7 +22,7 @@ router.get(
   validate(getTasksQuerySchema, "query"),
   asyncHandler(taskController.getTasks),
 );
-
+// Creating Task
 router.post(
   "/",
   requireAuth,
@@ -30,6 +30,7 @@ router.post(
   asyncHandler(taskController.createTask),
 );
 
+//updating task
 router.patch(
   "/:taskId",
   requireAuth,
